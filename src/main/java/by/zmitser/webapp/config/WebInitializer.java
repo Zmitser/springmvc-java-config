@@ -4,6 +4,7 @@ package by.zmitser.webapp.config;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.ServletContext;
@@ -36,7 +37,8 @@ public class WebInitializer implements WebApplicationInitializer {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(WebConfig.class);
         servletContext.addListener(new ContextLoaderListener(rootContext));
-
+        servletContext.addFilter("springSecurityFilterChain", new DelegatingFilterProxy("springSecurityFilterChain"))
+                .addMappingForUrlPatterns(null, false, "/*");
         DispatcherServlet dispatcherServlet = new DispatcherServlet(rootContext);
 
         ServletRegistration.Dynamic registration = servletContext.addServlet("dispatcher", dispatcherServlet);
